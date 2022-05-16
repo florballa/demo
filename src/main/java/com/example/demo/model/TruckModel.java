@@ -17,6 +17,10 @@ public class TruckModel {
 
     public TruckModel(){}
 
+    public Long getId() {
+        return id;
+    }
+
     public String getChassisNumber() {
         return chassisNumber;
     }

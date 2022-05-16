@@ -41,14 +41,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and().authorizeRequests()
 				.antMatchers("/general/**").permitAll()
-				.antMatchers("/orders/basicOrders", "/items/**").hasAuthority("MANAGER")
+				.antMatchers("/orders/basicOrders", "/items/**", "/orders").hasAuthority("MANAGER")
 				.antMatchers("/users/**").hasAuthority("SYSADMIN")
 				.anyRequest().authenticated()
 				.and().authorizeRequests()
 				.and()
 				.addFilter(new CustomAuthenticationFilter(authenticationManagerBean(), userService))
-				.addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class).logout()
-				.logoutSuccessUrl("/").permitAll();
+				.addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
 	}
 
 	@Override

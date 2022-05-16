@@ -23,12 +23,12 @@ public class EmailService {
 
 			System.err.println("In sendEmail with recipient:: " + recipientEmail);
 
-			String link = "http://192.168.46.241:3000/reset?token=" + token;
+			String link = "http://localhost:8088/reset?token=" + token;
 
 			MimeMessage message = mailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(message);
 
-			helper.setFrom("flor.balla97@gmail.com", "CBtrade");
+			helper.setFrom("flor.balla97@gmail.com", "Demo");
 			helper.setTo(recipientEmail);
 
 			String subject = "Reset your password!";
@@ -41,10 +41,10 @@ public class EmailService {
 					+ "or you have not made the request.</p>"
 					+ "<br>"
 					+ "<p>Best regards,</p>"
-					+ "<p><i>CBtrade Support Team</i></p>"
+					+ "<p><i>Demo Support Team</i></p>"
 					+ "<hr>"
 					+ "<br>"
-					+ "<a href=\"mailto:cbtrade@info.com\">cbtrade@info.com</a>"
+					+ "<a href=\"mailto:demo@info.com\">demo@info.com</a>"
 					+ "<br>"
 					+ "<a href=\"tel:5554280940\">Call us at 555-428-0940</a>";
 

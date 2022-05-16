@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.model.PasswordResetTokenModel;
 import com.example.demo.model.ResponseWrapper;
 import com.example.demo.model.UserModel;
+import com.example.demo.model.dto.UserDto;
 import com.example.demo.repository.PasswordResetTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -81,7 +82,7 @@ public class PasswordResetTokenService {
 
 				if (user.isPresent()) {
 					user.get().setPassword(password);
-					ResponseWrapper<UserModel> saveUserRes = userService.saveOrUpdateUser(user.get());
+					ResponseWrapper<UserDto> saveUserRes = userService.save(user.get());
 					if (saveUserRes.getStatus()) {
 						deleteToken(resetTokenModel);
 						return new ResponseWrapper<>("Success", true, new ArrayList<>());

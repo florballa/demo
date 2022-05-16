@@ -8,6 +8,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "order_model")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class OrderModel {
 
     @Id
@@ -17,13 +18,20 @@ public class OrderModel {
     private Date submittedDate;
     private Date deadlineDate;
 
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "order_status_id")
     private OrderStatusModel orderStatus;
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<ItemModel> items;
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JoinTable(
+            name = "orders_item",
+            joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id")
+    )
+    private List<OrderItemsModel> items;
     private Long userId;
 
-    public OrderModel(){}
+    public OrderModel() {
+    }
 
     public Long getId() {
         return id;
@@ -53,11 +61,11 @@ public class OrderModel {
         this.orderStatus = orderStatus;
     }
 
-    public List<ItemModel> getItems() {
+    public List<OrderItemsModel> getItems() {
         return items;
     }
 
-    public void setItems(List<ItemModel> items) {
+    public void setItems(List<OrderItemsModel> items) {
         this.items = items;
     }
 

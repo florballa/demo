@@ -3,8 +3,10 @@ package com.example.demo.controller;
 import com.example.demo.model.ItemModel;
 import com.example.demo.model.Pagination;
 import com.example.demo.model.ResponseWrapper;
+import com.example.demo.model.dto.ItemDto;
 import com.example.demo.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,22 +17,42 @@ public class ItemController {
     private ItemService itemService;
 
     @PostMapping
-    public ResponseWrapper<ItemModel> findAll(@RequestBody Pagination pagination){
-        return itemService.listAll(pagination);
+    public ResponseEntity<ResponseWrapper<ItemDto>> findAll(@RequestBody Pagination pagination){
+        ResponseWrapper<ItemDto> res = itemService.listAll(pagination);
+        if(res.getStatus())
+            return ResponseEntity.ok(res);
+        return ResponseEntity.status(460).body(res);
     }
 
     @PostMapping("/get/{id}")
-    public ResponseWrapper<ItemModel> getById(@PathVariable Long id){
-        return itemService.getById(id);
+    public ResponseEntity<ResponseWrapper<ItemDto>> getById(@PathVariable Long id){
+        ResponseWrapper<ItemDto> res = itemService.getById(id);
+        if(res.getStatus())
+            return ResponseEntity.ok(res);
+        return ResponseEntity.status(460).body(res);
     }
 
     @PostMapping("/save")
-    public ResponseWrapper<ItemModel> saveOrUpdate(@RequestBody ItemModel item){
-        return itemService.saveOrUpdate(item);
+    public ResponseEntity<ResponseWrapper<ItemDto>> save(@RequestBody ItemModel item){
+        ResponseWrapper<ItemDto> res = itemService.saveOrUpdate(item);
+        if(res.getStatus())
+            return ResponseEntity.ok(res);
+        return ResponseEntity.status(460).body(res);
     }
 
-    @PostMapping("/delete")
-    public ResponseWrapper<ItemModel> delete(@RequestBody ItemModel item){
-        return itemService.deleteItem(item);
+    @PostMapping("/update")
+    public ResponseEntity<ResponseWrapper<ItemDto>> update(@RequestBody ItemModel item){
+        ResponseWrapper<ItemDto> res = itemService.update(item);
+        if(res.getStatus())
+            return ResponseEntity.ok(res);
+        return ResponseEntity.status(460).body(res);
+    }
+
+    @PostMapping("/delete/{id}")
+    public ResponseEntity<ResponseWrapper<ItemDto>> delete(@PathVariable Long id){
+        ResponseWrapper<ItemDto> res = itemService.deleteItem(id);
+        if(res.getStatus())
+            return ResponseEntity.ok(res);
+        return ResponseEntity.status(460).body(res);
     }
 }

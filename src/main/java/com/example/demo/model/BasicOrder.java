@@ -19,6 +19,10 @@ public class BasicOrder {
 
     public BasicOrder(){}
 
+    public Long getId() {
+        return id;
+    }
+
     public Date getSubmittedDate() {
         return submittedDate;
     }
@@ -33,6 +37,10 @@ public class BasicOrder {
 
     public void setDeadlineDate(Date deadlineDate) {
         this.deadlineDate = deadlineDate;
+    }
+
+    public OrderStatusModel getOrderStatus() {
+        return orderStatus;
     }
 
     public Long getUserId() {

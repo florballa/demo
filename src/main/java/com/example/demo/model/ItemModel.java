@@ -12,11 +12,16 @@ public class ItemModel {
     @SequenceGenerator(name = "item_seq", sequenceName = "item_id_seq", allocationSize = 1)
     private Long id;
     private String itemName;
+    @Column(unique = true)
+    private String itemCode;
     private BigDecimal quantity;
     private BigDecimal unitPrice;
-    private Long orderId;
 
     public ItemModel(){}
+
+    public Long getId() {
+        return id;
+    }
 
     public String getItemName() {
         return itemName;
@@ -42,12 +47,12 @@ public class ItemModel {
         this.unitPrice = unitPrice;
     }
 
-    public Long getOrderId() {
-        return orderId;
+    public String getItemCode() {
+        return itemCode;
     }
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
+    public void setItemCode(String itemCode) {
+        this.itemCode = itemCode;
     }
 
     @Override
@@ -57,7 +62,6 @@ public class ItemModel {
                 ", itemName='" + itemName + '\'' +
                 ", quantity=" + quantity +
                 ", unitPrice=" + unitPrice +
-                ", orderModel=" + orderId +
                 '}';
     }
 }

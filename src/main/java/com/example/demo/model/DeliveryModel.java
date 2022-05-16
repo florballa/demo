@@ -1,11 +1,16 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class DeliveryModel {
 
     @Id
@@ -14,9 +19,15 @@ public class DeliveryModel {
     private Long id;
 
     @OneToMany
+    @JsonBackReference
     private List<OrderModel> orders;
 
-    @OneToMany
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "delivery_trucks",
+            joinColumns = @JoinColumn(name = "delivery_id"),
+            inverseJoinColumns = @JoinColumn(name = "truck_id")
+    )
     private List<TruckModel> trucks;
 
     private Date date;
@@ -28,10 +39,6 @@ public class DeliveryModel {
     }
     public List<OrderModel> getOrders() {
         return orders;
-    }
-
-    public void setOrders(List<OrderModel> orders) {
-        this.orders = orders;
     }
 
     public List<TruckModel> getTrucks() {

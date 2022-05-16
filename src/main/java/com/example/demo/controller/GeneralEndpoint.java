@@ -32,15 +32,15 @@ public class GeneralEndpoint {
 	@Autowired
 	private PasswordResetTokenService passwordService;
 
-	@PostMapping("/signup")
-	public ResponseWrapper<UserModel> signUp(@RequestBody UserModel user){
-		return userService.saveOrUpdateUser(user);
-	}
+//	@PostMapping("/signup")
+//	public ResponseWrapper<UserModel> signUp(@RequestBody UserModel user){
+//		return userService.saveOrUpdateUser(user);
+//	}
 
 	@PostMapping("/sendEmailForPassword")
 	public <T> ResponseWrapper sendLinkToEmail(@RequestBody Map<String, Object> email) {
 		try {
-
+			System.err.println("Inside send link");
 			String userEmail = email.get("email").toString();
 			Optional<UserModel> user = userService.getByEmail(userEmail);
 			if (user.isPresent()) {

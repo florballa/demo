@@ -2,6 +2,8 @@ package com.example.demo.service;
 
 import com.example.demo.model.*;
 import com.example.demo.repository.DeliveryRepository;
+import com.example.demo.repository.ItemRepository;
+import com.example.demo.repository.OrderStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +22,12 @@ public class DeliveryService {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private OrderStatusRepository orderStatusRepository;
+
+    @Autowired
+    private ItemRepository itemRepository;
 
     public ResponseWrapper<DeliveryModel> listAll(Pagination pagination){
         try{
@@ -47,7 +55,7 @@ public class DeliveryService {
         }
     }
 
-    public ResponseWrapper<DeliveryModel> saveOrUpdate(DeliveryModel delivery){
+    public ResponseWrapper<DeliveryModel> save(DeliveryModel delivery){
         try{
             TruckModel tr = checkTrucksByDay(delivery.getTrucks());
             if(tr != null)
@@ -55,10 +63,15 @@ public class DeliveryService {
             String dateName = LocalDate.now().getDayOfWeek().name();
             if (dateName.equalsIgnoreCase("SUNDAY"))
                 return new ResponseWrapper<>("Sorry, drivers are off today!", false, new ArrayList<>());
+
+
             BigDecimal itemQuantity = getItemQuantity(delivery.getOrders());
             Double howManyTrucks = checkHowManyTruckAreNeeded(itemQuantity);
             if(itemQuantity.compareTo(BigDecimal.TEN) >= 0)
                 return new ResponseWrapper<>("Sorry, you need " + howManyTrucks + "more truck for this orders!", false, new ArrayList<>());
+
+            saveOrdersStatusAndItemQuantity(delivery.getOrders());
+
             return new ResponseWrapper<>("Success", true, new ArrayList<>(Arrays.asList(deliveryRepository.save(delivery))));
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,10 +79,20 @@ public class DeliveryService {
         }
     }
 
+    public ResponseWrapper<DeliveryModel> delete(Long id){
+        try{
+            deliveryRepository.deleteById(id);
+            return new ResponseWrapper<>("Success", true, new ArrayList<>());
+        } catch (Exception e){
+            e.printStackTrace();
+            return new ResponseWrapper<>("Failed, " + e.getMessage(), false, new ArrayList<>());
+        }
+    }
+
     private BigDecimal getItemQuantity(List<OrderModel> orders){
         BigDecimal itemsQuantity = BigDecimal.ZERO;
-        for(OrderModel order: orders){
-            for(ItemModel item : order.getItems()){
+        for(OrderModel order : orders){
+            for(OrderItemsModel item : order.getItems()){
                 itemsQuantity = itemsQuantity.add(item.getQuantity());
             }
         }
@@ -79,6 +102,19 @@ public class DeliveryService {
     private double checkHowManyTruckAreNeeded(BigDecimal itemQuantity){
         BigDecimal diff = itemQuantity.divide(BigDecimal.TEN);
         return Math.ceil(diff.doubleValue());
+    }
+
+    private void saveOrdersStatusAndItemQuantity(List<OrderModel> orders){
+        for(OrderModel order : orders){
+            OrderStatusModel orderStatusModel = orderStatusRepository.getById(5L);
+            order.setOrderStatus(orderStatusModel);
+            orderService.save(order);
+
+            for(OrderItemsModel item : order.getItems()){
+                ItemModel itemInDb = itemRepository.getByItemCode(item.getItemCode());
+                item.setQuantity(itemInDb.getQuantity().subtract(item.getQuantity()));
+            }
+        }
     }
 
     private TruckModel checkTrucksByDay(List<TruckModel> trucks){

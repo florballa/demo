@@ -15,6 +15,10 @@ public class OrderStatusModel {
 
     public OrderStatusModel(){}
 
+    public Long getId() {
+        return id;
+    }
+
     public String getStatusName() {
         return statusName;
     }
